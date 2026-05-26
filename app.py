@@ -9,7 +9,7 @@ import pandas as pd
 st.write(df.head())
 
 st.title("Grocery Store Management Analysis")
-df = pd.read_csv("dataset.csv"
+df = pd.read_csv("dataset.csv")
 
 st.write("Target User Frequency Analyzer")
 
