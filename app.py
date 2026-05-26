@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import streamlit as st
 import pandas as pd
 
-df = pd.read_csv("supermarket_sales.csv")
+df = pd.read_csv("dataset.csv")
 
 st.write(df.head())
 
