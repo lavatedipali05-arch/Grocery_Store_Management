@@ -5,6 +5,7 @@ st.title("Grocery Store Management Analysis")
 
 df = pd.read_csv("dataset.csv")
 
+df.columns = df.columns.str.strip()
 
 st.subheader("Dataset Preview")
 st.dataframe(df)
