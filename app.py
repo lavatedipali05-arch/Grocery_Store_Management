@@ -7,9 +7,12 @@ st.title("Grocery Store App")
 df1 = pd.read_csv("dataset.csv")
 df2 = pd.read_csv("target_user_analysis.csv")
 
-# clean column names (important)
-df1.columns = df1.columns.str.strip()
-df2.columns = df2.columns.str.strip()
+# clean column names
+df1.columns = df1.columns.str.strip().str.lower()
+df2.columns = df2.columns.str.strip().str.lower()
+
+# 🔍 check columns (important)
+st.write("Columns df1:", df1.columns)
 
 # -------------------
 # Sales Data
@@ -17,7 +20,8 @@ df2.columns = df2.columns.str.strip()
 st.header("Sales Data")
 st.write(df1.head())
 
-city_sales = df1.groupby("City")["Total"].sum()
+# 🔥 use lowercase 'total'
+city_sales = df1.groupby("city")["total"].sum()
 st.bar_chart(city_sales)
 
 # -------------------
@@ -26,5 +30,5 @@ st.bar_chart(city_sales)
 st.header("User Data")
 st.write(df2.head())
 
-gender = df2["Gender"].value_counts()
+gender = df2["gender"].value_counts()
 st.bar_chart(gender)
