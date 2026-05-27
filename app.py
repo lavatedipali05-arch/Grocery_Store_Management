@@ -5,7 +5,6 @@ import random
 st.title("Grocery Store Management Analysis")
 st.write("Target User Frequency Analyzer")
 
-# Auto dataset
 def generate_data():
     items = ["Rice", "Milk", "Bread", "Eggs"]
     data = []
@@ -24,8 +23,8 @@ df = generate_data()
 st.dataframe(df)
 
 if st.button("Analyze"):
-    st.write("### Summary")
+    st.write("Summary")
     st.write(df.describe())
 
-    st.write("### Top Selling Items")
+    st.write("Top Selling Items")
     st.bar_chart(df["Item"].value_counts())
