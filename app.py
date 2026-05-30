@@ -54,5 +54,24 @@ st.write("Top Selling Items")
 
 st.bar_chart(df["Item"].value_counts())
 
+from io import BytesIO
+from reportlab.pdfgen import canvas
+
+pdf_buffer = BytesIO()
+
+c = canvas.Canvas(pdf_buffer)
+c.drawString(100, 750, "Grocery Store Sales Report")
+c.drawString(100, 730, f"Total Records: {len(df)}")
+c.save()
+
+pdf_buffer.seek(0)
+
+st.download_button(
+    label=" Download PDF Report",
+    data=pdf_buffer,
+    file_name="sales_report.pdf",
+    mime="application/pdf"
+)
+
 
 
