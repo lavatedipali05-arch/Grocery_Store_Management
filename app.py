@@ -48,10 +48,11 @@ forecast_df = pd.DataFrame({
 })
 st.dataframe(forecast_df)
 
-    st.line_chart(forecast_df.set_index("Day"))
+st.line_chart(forecast_df.set_index("Day"))
 
-    st.write("Top Selling Items")
-    st.bar_chart(df["Item"].value_counts())
+st.write("Top Selling Items")
+
+st.bar_chart(df["Item"].value_counts())
 
 
 
