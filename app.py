@@ -69,7 +69,6 @@ def generate_data():
 
 df = generate_data()
 
-
 sales_count = df["Item"].value_counts()
 
 for item in sales_count.index:
