@@ -51,7 +51,7 @@ def generate_data():
             item,
             qty,
             price,
-            total
+            total,
             expiry_days
         ])
 
