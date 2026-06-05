@@ -62,9 +62,9 @@ def generate_data():
             "Item",
             "Qty",
             "Price",
-            "Total"
+            "Total",
             "Expiry_Days"
-        ])
+        ]
     )
 
 df = generate_data()
