@@ -42,6 +42,7 @@ def generate_data():
         item = random.choice(items)
         qty = random.randint(1, 5)
         price = random.randint(20, 100)
+        expiry_days = random.randint(1,30)
 
         total = qty * price
 
@@ -51,6 +52,7 @@ def generate_data():
             qty,
             price,
             total
+            expiry_days
         ])
 
     return pd.DataFrame(
@@ -61,6 +63,7 @@ def generate_data():
             "Qty",
             "Price",
             "Total"
+            "Expiry_Days"
         ]
     )
 
@@ -99,6 +102,28 @@ col3.metric(
 st.subheader("Sales Records")
 st.dataframe(df)
 
+st.subheader("Sales Recoreds")
+st.dataframe(df)
+
+
+st.subheader("Smart Expiry Alert System")
+
+expiring_products = df[df["Expiry_Days"] <= 7]
+
+if not expiring_products.empty:
+    st.warning("Products Expiring Within 7 Days")
+    st.dataframe(expiring_products)
+
+urgent = df[df["Expiry_Days"] <= 3]
+
+if not urgent.empty:
+    st.error(" Urgent: Products Expiring Within 3 Days")
+    st.dataframe(urgent)
+
+discount_df = df[df["Expiry_Days"] <= 5]
+
+if not discount_df.empty:
+    st.info("Suggested Action: Offer 20% discount on products nearing expiry.")
 
 st.subheader("Low Stock Alert")
 
@@ -180,7 +205,7 @@ st.success(
 )
 
 
-st.subheader("♻ Waste Reduction Analytics")
+st.subheader("Waste Reduction Analytics")
 
 df["Unsold"] = 10 - df["Qty"]
 
