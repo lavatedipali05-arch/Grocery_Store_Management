@@ -1,35 +1,130 @@
 import streamlit as st
 import pandas as pd
 import random
-from sklearn.linear_model import LinearRegression
 import numpy as np
+from sklearn.linear_model import LinearRegression
+from io import BytesIO
+from reportlab.pdfgen import canvas
 
+# ---------------- ADMIN LOGIN ----------------
 
-st.title("Grocery Store Management Analysis")
-st.write("Target User Frequency Analyzer")
+USERNAME = "admin"
+PASSWORD = "admin123"
+
+st.sidebar.title("Admin Login")
+
+user = st.sidebar.text_input("Username")
+pwd = st.sidebar.text_input("Password", type="password")
+
+if user != USERNAME or pwd != PASSWORD:
+    st.warning("Please Login First")
+    st.stop()
+
+# ---------------- TITLE ----------------
+
+st.title("🛒 Grocery Store Management Analysis")
+st.write("AI Powered Grocery Analytics Dashboard")
+
+# ---------------- DATA GENERATION ----------------
 
 def generate_data():
     items = ["Rice", "Milk", "Bread", "Eggs"]
+
+    customers = [
+        "Rahul",
+        "Amit",
+        "Priya",
+        "Sneha",
+        "Rohit"
+    ]
+
     data = []
 
     for i in range(50):
+        customer = random.choice(customers)
         item = random.choice(items)
-        qty = random.randint(1,5)
-        price = random.randint(20,100)
-        total = qty * price
-        data.append([item, qty, price, total])
+        qty = random.randint(1, 5)
+        price = random.randint(20, 100)
 
-    return pd.DataFrame(data, columns=["Item","Qty","Price","Total"])
+        total = qty * price
+
+        data.append([
+            customer,
+            item,
+            qty,
+            price,
+            total
+        ])
+
+    return pd.DataFrame(
+        data,
+        columns=[
+            "Customer",
+            "Item",
+            "Qty",
+            "Price",
+            "Total"
+        ]
+    )
 
 df = generate_data()
 
+# ---------------- DYNAMIC PRICING ----------------
+
+sales_count = df["Item"].value_counts()
+
+for item in sales_count.index:
+    if sales_count[item] > 12:
+        df.loc[df["Item"] == item, "Price"] *= 1.10
+
+df["Total"] = df["Qty"] * df["Price"]
+
+# ---------------- KPI DASHBOARD ----------------
+
+st.subheader("📊 Business KPIs")
+
+col1, col2, col3 = st.columns(3)
+
+col1.metric(
+    "Total Sales",
+    f"₹{int(df['Total'].sum())}"
+)
+
+col2.metric(
+    "Orders",
+    len(df)
+)
+
+col3.metric(
+    "Products",
+    df["Item"].nunique()
+)
+
+# ---------------- DATA TABLE ----------------
+
+st.subheader("Sales Records")
 st.dataframe(df)
 
-if st.button("Analyze"):
-    st.write("Summary")
+# ---------------- LOW STOCK ALERT ----------------
+
+st.subheader("⚠ Low Stock Alert")
+
+low_stock = df[df["Qty"] <= 2]
+
+if not low_stock.empty:
+    st.error("Low Stock Products Found")
+    st.dataframe(low_stock)
+
+# ---------------- ANALYZE BUTTON ----------------
+
+if st.button("Analyze Data"):
+
+    st.subheader("Summary Statistics")
     st.write(df.describe())
 
-    st.subheader(" AI Future Forecast")
+# ---------------- AI SALES FORECASTING ----------------
+
+st.subheader("🤖 AI Sales Forecast")
 
 df["Day"] = np.arange(len(df))
 
@@ -39,39 +134,115 @@ y = df["Total"]
 model = LinearRegression()
 model.fit(X, y)
 
-future_days = np.arange(len(df), len(df)+7).reshape(-1,1)
+future_days = np.arange(
+    len(df),
+    len(df) + 7
+).reshape(-1, 1)
+
 future_sales = model.predict(future_days)
 
 forecast_df = pd.DataFrame({
-    "Day": range(1,8),
+    "Day": range(1, 8),
     "Predicted Sales": future_sales
 })
+
 st.dataframe(forecast_df)
 
-st.line_chart(forecast_df.set_index("Day"))
+st.line_chart(
+    forecast_df.set_index("Day")
+)
 
-st.write("Top Selling Items")
+# ---------------- TOP SELLING ITEMS ----------------
 
-st.bar_chart(df["Item"].value_counts())
+st.subheader("🔥 Top Selling Items")
 
-from io import BytesIO
-from reportlab.pdfgen import canvas
+st.bar_chart(
+    df["Item"].value_counts()
+)
+
+# ---------------- CUSTOMER LOYALTY ----------------
+
+st.subheader("🏆 Customer Loyalty Score")
+
+loyalty = (
+    df.groupby("Customer")
+    .size()
+    .reset_index(name="Orders")
+)
+
+st.dataframe(loyalty)
+
+# ---------------- SMART RECOMMENDATION ----------------
+
+st.subheader("🧠 Smart Product Recommendation")
+
+top_item = (
+    df["Item"]
+    .value_counts()
+    .idxmax()
+)
+
+recommend = {
+    "Rice": "Milk",
+    "Milk": "Bread",
+    "Bread": "Eggs",
+    "Eggs": "Rice"
+}
+
+st.success(
+    f"Customers buying {top_item} also buy {recommend[top_item]}"
+)
+
+# ---------------- WASTE ANALYTICS ----------------
+
+st.subheader("♻ Waste Reduction Analytics")
+
+df["Unsold"] = 10 - df["Qty"]
+
+waste = (
+    df.groupby("Item")["Unsold"]
+    .sum()
+)
+
+st.bar_chart(waste)
+
+# ---------------- PDF REPORT ----------------
 
 pdf_buffer = BytesIO()
 
 c = canvas.Canvas(pdf_buffer)
-c.drawString(100, 750, "Grocery Store Sales Report")
-c.drawString(100, 730, f"Total Records: {len(df)}")
+
+c.drawString(
+    100,
+    750,
+    "Grocery Store Sales Report"
+)
+
+c.drawString(
+    100,
+    730,
+    f"Total Records: {len(df)}"
+)
+
+c.drawString(
+    100,
+    710,
+    f"Total Sales: ₹{int(df['Total'].sum())}"
+)
+
 c.save()
 
 pdf_buffer.seek(0)
 
 st.download_button(
-    label=" Download PDF Report",
+    label="📄 Download PDF Report",
     data=pdf_buffer,
     file_name="sales_report.pdf",
     mime="application/pdf"
 )
 
+# ---------------- FOOTER ----------------
 
-
+st.success(
+    "Project Loaded Successfully"
+)
