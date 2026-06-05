@@ -6,7 +6,6 @@ from sklearn.linear_model import LinearRegression
 from io import BytesIO
 from reportlab.pdfgen import canvas
 
-# ---------------- ADMIN LOGIN ----------------
 
 USERNAME = "admin"
 PASSWORD = "admin123"
@@ -20,12 +19,10 @@ if user != USERNAME or pwd != PASSWORD:
     st.warning("Please Login First")
     st.stop()
 
-# ---------------- TITLE ----------------
 
-st.title("🛒 Grocery Store Management Analysis")
+st.title("Grocery Store Management Analysis")
 st.write("AI Powered Grocery Analytics Dashboard")
 
-# ---------------- DATA GENERATION ----------------
 
 def generate_data():
     items = ["Rice", "Milk", "Bread", "Eggs"]
@@ -69,7 +66,6 @@ def generate_data():
 
 df = generate_data()
 
-# ---------------- DYNAMIC PRICING ----------------
 
 sales_count = df["Item"].value_counts()
 
@@ -79,9 +75,8 @@ for item in sales_count.index:
 
 df["Total"] = df["Qty"] * df["Price"]
 
-# ---------------- KPI DASHBOARD ----------------
 
-st.subheader("📊 Business KPIs")
+st.subheader(" Business KPIs")
 
 col1, col2, col3 = st.columns(3)
 
@@ -100,14 +95,12 @@ col3.metric(
     df["Item"].nunique()
 )
 
-# ---------------- DATA TABLE ----------------
 
 st.subheader("Sales Records")
 st.dataframe(df)
 
-# ---------------- LOW STOCK ALERT ----------------
 
-st.subheader("⚠ Low Stock Alert")
+st.subheader("Low Stock Alert")
 
 low_stock = df[df["Qty"] <= 2]
 
@@ -115,16 +108,13 @@ if not low_stock.empty:
     st.error("Low Stock Products Found")
     st.dataframe(low_stock)
 
-# ---------------- ANALYZE BUTTON ----------------
 
 if st.button("Analyze Data"):
 
     st.subheader("Summary Statistics")
     st.write(df.describe())
 
-# ---------------- AI SALES FORECASTING ----------------
-
-st.subheader("🤖 AI Sales Forecast")
+st.subheader(" AI Sales Forecast")
 
 df["Day"] = np.arange(len(df))
 
@@ -152,17 +142,14 @@ st.line_chart(
     forecast_df.set_index("Day")
 )
 
-# ---------------- TOP SELLING ITEMS ----------------
 
-st.subheader("🔥 Top Selling Items")
+st.subheader(" Top Selling Items")
 
 st.bar_chart(
     df["Item"].value_counts()
 )
 
-# ---------------- CUSTOMER LOYALTY ----------------
-
-st.subheader("🏆 Customer Loyalty Score")
+st.subheader("Customer Loyalty Score")
 
 loyalty = (
     df.groupby("Customer")
@@ -172,9 +159,8 @@ loyalty = (
 
 st.dataframe(loyalty)
 
-# ---------------- SMART RECOMMENDATION ----------------
 
-st.subheader("🧠 Smart Product Recommendation")
+st.subheader(" Smart Product Recommendation")
 
 top_item = (
     df["Item"]
@@ -193,7 +179,6 @@ st.success(
     f"Customers buying {top_item} also buy {recommend[top_item]}"
 )
 
-# ---------------- WASTE ANALYTICS ----------------
 
 st.subheader("♻ Waste Reduction Analytics")
 
@@ -206,7 +191,6 @@ waste = (
 
 st.bar_chart(waste)
 
-# ---------------- PDF REPORT ----------------
 
 pdf_buffer = BytesIO()
 
@@ -235,13 +219,11 @@ c.save()
 pdf_buffer.seek(0)
 
 st.download_button(
-    label="📄 Download PDF Report",
+    label=" Download PDF Report",
     data=pdf_buffer,
     file_name="sales_report.pdf",
     mime="application/pdf"
 )
-
-# ---------------- FOOTER ----------------
 
 st.success(
     "Project Loaded Successfully"
